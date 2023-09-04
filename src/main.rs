@@ -10,13 +10,10 @@ fn main() {
 
 
         //let tcp_header = etherparse::TcpHeaderSlice::from_slice(&buffer).unwrap();
-        match etherparse::PacketHeaders::from_ethernet_slice(&buffer) {
+        match etherparse::Ipv4HeaderSlice::from_slice(&buffer) {
             Err(value) => println!("{:?}", value),
             Ok(value) => {
-                println!("link: {:?}", value.link);
-                println!("vlan: {:?}", value.vlan);
-                println!("ip: {:?}", value.ip);
-                println!("transport: {:?}", value.transport);
+                println!("link: {:?}", value);
             }
 
         }
