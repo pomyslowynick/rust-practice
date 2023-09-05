@@ -5,5 +5,5 @@ all:
 	sudo ip addr add dev tun1 192.168.0.2/26
 	echo "setting tun1 to up"
 	sudo ip link set dev tun1 up
-	sleep 60
+	sleep 5
 	pkill rust-practice
