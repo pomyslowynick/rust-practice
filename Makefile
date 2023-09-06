@@ -7,3 +7,6 @@ all:
 	sudo ip link set dev tun1 up
 	sleep 5
 	pkill rust-practice
+
+build:
+	cargo build
