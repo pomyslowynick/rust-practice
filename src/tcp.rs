@@ -22,18 +22,22 @@ impl <'a> Connection<'a> {
 
     pub fn connect(&self, nic: &Iface) {
         let mut buffer = vec![0; 1500];
-        let ip_packet = Ipv4Header::new(0, 64, 6, self.ip_header.destination(), self.ip_header.source());
+        let mut payload = vec![0; 0];
+        let mut ip_packet = Ipv4Header::new(0, 64, 6, self.ip_header.destination(), self.ip_header.source());
 
-
-        let tcp_packet = TcpHeader::new(self.tcp_header.destination_port(), self.tcp_header.destination_port(), 0, 1 );
+        let mut tcp_packet = TcpHeader::new(self.tcp_header.destination_port(), self.tcp_header.source_port(), self.tcp_header.sequence_number() + 1, 100 );
+        tcp_packet.checksum = tcp_packet.calc_checksum_ipv4(&ip_packet, &payload).unwrap();
+        
+        ip_packet.set_payload_len(tcp_packet.header_len() as usize);
 
         use std::io::Write;
         let mut unwritten = &mut buffer[..];
-        let writing_result = ip_packet.write(&mut unwritten).unwrap();
+        let ip_result = ip_packet.write(&mut unwritten).unwrap();
         let tcp_result = tcp_packet.write(&mut unwritten).unwrap();
-
+        unwritten.write(&payload);
         let unwritten = unwritten.len();
-        println!("{:?}", buffer);
+        println!("Buffer after writing {:x?}", &buffer[..buffer.len()-unwritten]);
+
         nic.send(&buffer[..buffer.len()-unwritten]);
     }
 }

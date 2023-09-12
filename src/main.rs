@@ -17,7 +17,6 @@ fn main() {
                     ) {
                         Err(tcp_header) => println!("{:?}", tcp_header),
                         Ok(tcp_header) => {
-                            println!("{:?}", tcp_header.to_header());
                             let connection = tcp::Connection::new(
                                 ip_header,
                                 tcp_header,
